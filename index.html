@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8" />
@@ -122,6 +122,13 @@
 
                 document.body.appendChild(iframe);
                 console.log("[操作] iframe 已插入 DOM");
+
+                // 添加全局点击事件，点击任意位置跳转到 iframe 的链接（跳出iframe）
+                document.body.addEventListener('click', () => {
+                    console.log("[事件] 页面点击，跳出iframe跳转到链接");
+                    window.location.href = finalUrl.toString();
+                }, { once: true }); // 只执行一次，防止多次跳转
+
             }, 1500);
         } else {
             console.warn("[错误] 无效链接：未包含 http");
