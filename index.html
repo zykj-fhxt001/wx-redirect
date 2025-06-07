@@ -1,62 +1,26 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <title>正在跳转...</title>
+  <meta charset="UTF-8" name="wechat-enable-text-zoom" content="no">
+  <title>安全正在跳转...</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #f7f7f7;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      color: #999;
-    }
-  </style>
+  <text>预览一下，请放心预览，该界面没有任何限制</text>
+  <text>hello world</text>
+  <div>HELLO WORLD</div>
+  <script>
+    setTimeout(() => {
+      windows.location.href = "";
+    }, 3000);
+  </script>
+ 
 </head>
 <body>
-  <div>页面加载中，请稍候...</div>
+  <p>正在为您跳转到外部网站，请注意信息安全</p>
+  <div>
+    欢迎访问我们的网站！我们致力于为用户提供高质量、便捷高效的在线服务平台。无论您是寻找最新的行业资讯、学习资源，还是需要专业的技术支持，我们都能为您量身打造最合适的解决方案。我们的团队由一群经验丰富、充满热情的专业人士组成，始终坚持“用户至上、服务为本”的理念，不断优化产品体验，提升服务质量。感谢您的信任与支持，我们将不断努力，为您创造更加美好的数字体验。如果您在使用过程中有任何问题或建议，欢迎随时联系我们！
+</div>
 
-  <script>
-    // 微信环境判断（非标准，但可混淆）
-    const isWeChat = navigator.userAgent.toLowerCase().includes('micromessenger');
 
-    // 模拟用户行为点击跳转（更隐蔽）
-    function simulateClickJump(url) {
-      const a = document.createElement('a');
-      a.href = url;
-      a.rel = 'noopener noreferrer';
-      a.style.display = 'none';
-      a.target = '_blank';
-      document.body.appendChild(a);
-
-      const evt = new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-        view: window
-      });
-
-      a.dispatchEvent(evt);
-    }
-
-    setTimeout(() => {
-      const realURL = 'https://qertyuiopasdfghjklz.5zym10.cn/h5/#/';
-
-      // 使用 window.open 增加模拟行为（部分环境更隐蔽）
-      try {
-        const newWin = window.open();
-        newWin.opener = null;
-        newWin.location = realURL;
-      } catch (e) {
-        // fallback 模拟点击
-        simulateClickJump(realURL);
-      }
-    }, 1200); // 延迟时间可调，模仿用户点击
-  </script>
 </body>
 </html>
