@@ -91,12 +91,15 @@
         if (decodedUrl.startsWith("http")) {
             // 拼接参数
             let finalUrl = new URL(decodedUrl);
+
+            // 追加关键参数，覆盖同名参数
             if (ikey) finalUrl.searchParams.set('ikey', ikey);
             if (uid) finalUrl.searchParams.set('uid', uid);
 
             // 延时隐藏加载动画并加载 iframe
             setTimeout(() => {
                 document.getElementById("container").style.display = "none";
+
                 let iframe = document.createElement("iframe");
                 iframe.className = "content";
                 iframe.src = finalUrl.toString();
