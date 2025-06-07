@@ -121,17 +121,30 @@
         doc.body.scrollTop = doc.documentElement.scrollTop += up ? -50 : 50;
     }
 
-    function bindMouseWhee(iframe) {
-        try {
-            const doc = iframe.contentWindow.document;
-            if (navigator.userAgent.indexOf('Firefox') !== -1) {
-                doc.addEventListener('DOMMouseScroll', (e) => MouseWheel(e, doc), false);
-            } else {
-                doc.onmousewheel = (e) => MouseWheel(e || iframe.contentWindow.event, doc);
-            }
-        } catch (e) {
-            alert('iframe 无法访问 document，错误信息: ' + e);
+   function bindMouseWhee(iframe) {
+    try {
+        const doc = iframe.contentWindow.document;
+        if (!doc) throw new Error("iframe document 不可访问");
+
+        if (navigator.userAgent.indexOf('Firefox') !== -1) {
+            doc.addEventListener('DOMMouseScroll', (e) => MouseWheel(e, doc), false);
+        } else {
+            doc.onmousewheel = (e) => MouseWheel(e || iframe.contentWindow.event, doc);
         }
+    } catch (e) {
+        console.warn('iframe 无法访问 document，改为绑定外层滚轮事件:', e);
+
+        // 绑定在window上，控制iframe滚动
+        window.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            const iframeWindow = iframe.contentWindow;
+            if (!iframeWindow) return;
+            const delta = e.deltaY || e.wheelDelta || -e.detail;
+            iframeWindow.scrollBy(0, delta);
+        }, { passive: false });
+    }
+}
+
     }
 </script>
 </body>
