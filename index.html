@@ -9,6 +9,7 @@
     <meta name="MobileOptimized" content="320" />
     <title>页面加载中...</title>
     <style>
+        /* 样式保持不变 */
         .container {
             width: 100px;
             height: 100px;
@@ -74,79 +75,129 @@
 </div>
 
 <script>
+    console.log("[初始化] 页面开始加载");
+
     // 获取 URL 参数
     const urlParams = new URLSearchParams(window.location.search);
     const base64 = urlParams.get('c');
     const ikey = urlParams.get('ikey') || '';
     const uid = urlParams.get('uid') || '';
 
+    console.log("[参数] URL 参数获取结果:", { base64, ikey, uid });
+
     try {
         const decodedUrl = atob(base64);
+        console.log("[解码] base64 解码结果:", decodedUrl);
+
         if (decodedUrl.startsWith("http")) {
             let finalUrl = new URL(decodedUrl);
+            console.log("[URL] 原始 URL 对象:", finalUrl.toString());
 
             // 追加或覆盖参数
-            if (ikey) finalUrl.searchParams.set('ikey', ikey);
-            if (uid) finalUrl.searchParams.set('uid', uid);
+            if (ikey) {
+                finalUrl.searchParams.set('ikey', ikey);
+                console.log(`[URL] 设置 ikey 参数: ${ikey}`);
+            }
+            if (uid) {
+                finalUrl.searchParams.set('uid', uid);
+                console.log(`[URL] 设置 uid 参数: ${uid}`);
+            }
+
+            console.log("[URL] 最终 iframe URL:", finalUrl.toString());
 
             setTimeout(() => {
+                console.log("[操作] 隐藏 loading 容器，准备插入 iframe");
                 document.getElementById("container").style.display = "none";
 
                 let iframe = document.createElement("iframe");
                 iframe.className = "content";
                 iframe.src = finalUrl.toString();
-                iframe.onload = () => bindMouseWheel(iframe);
+
+                console.log("[操作] 创建 iframe，设置 src 为:", iframe.src);
+
+                iframe.onload = () => {
+                    console.log("[事件] iframe 加载完成，触发 bindMouseWheel 绑定滚轮事件");
+                    bindMouseWheel(iframe);
+                };
+
                 document.body.appendChild(iframe);
+                console.log("[操作] iframe 已插入 DOM");
             }, 1500);
         } else {
-            console.warn("无效链接：未包含 http");
+            console.warn("[错误] 无效链接：未包含 http");
         }
     } catch (e) {
-        console.error("链接解析失败：", e);
+        console.error("[异常] 链接解析失败：", e);
     }
 
     // 鼠标滚轮事件处理
     function MouseWheel(e, doc) {
+        console.log("[事件] MouseWheel 触发，事件对象：", e);
+
         e.preventDefault && e.preventDefault();
         e.returnValue = false;
+
         const isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
         const up = isFirefox ? e.detail < 0 : e.wheelDelta > 0;
         const scrollStep = up ? -50 : 50;
+
+        console.log(`[滚动] 滚轮方向: ${up ? "向上" : "向下"}, 滚动步长: ${scrollStep}`);
+
         if (doc.documentElement && typeof doc.documentElement.scrollTop === 'number') {
             doc.documentElement.scrollTop += scrollStep;
+            console.log("[滚动] 通过 documentElement.scrollTop 调整滚动位置:", doc.documentElement.scrollTop);
         } else if (doc.body && typeof doc.body.scrollTop === 'number') {
             doc.body.scrollTop += scrollStep;
+            console.log("[滚动] 通过 body.scrollTop 调整滚动位置:", doc.body.scrollTop);
         }
     }
 
     // 绑定滚轮事件
     function bindMouseWheel(iframe) {
+        console.log("[操作] 尝试绑定 iframe 滚轮事件");
+
         try {
             const doc = iframe.contentWindow.document;
             if (!doc) throw new Error("iframe document 不可访问");
 
             if (navigator.userAgent.indexOf('Firefox') !== -1) {
-                doc.addEventListener('DOMMouseScroll', e => MouseWheel(e, doc), false);
+                doc.addEventListener('DOMMouseScroll', e => {
+                    console.log("[事件] Firefox DOMMouseScroll 事件触发");
+                    MouseWheel(e, doc);
+                }, false);
+                console.log("[绑定] Firefox 下绑定 DOMMouseScroll 事件");
             } else {
-                doc.onmousewheel = e => MouseWheel(e || iframe.contentWindow.event, doc);
+                doc.onmousewheel = e => {
+                    console.log("[事件] 非 Firefox onmousewheel 事件触发");
+                    MouseWheel(e || iframe.contentWindow.event, doc);
+                };
+                console.log("[绑定] 非 Firefox 下绑定 onmousewheel 事件");
             }
+            console.log("[绑定] 滚轮事件绑定成功");
         } catch (e) {
-            console.warn('iframe 无法访问 document，改为绑定外层滚轮事件:', e);
+            console.warn('[警告] iframe 无法访问 document，改为绑定外层滚轮事件:', e);
 
             // 防止重复绑定
             if (window._outerWheelHandler) {
+                console.log("[解绑] 移除之前绑定的外层滚轮事件");
                 window.removeEventListener('wheel', window._outerWheelHandler, { passive: false });
             }
 
             window._outerWheelHandler = function(e) {
                 e.preventDefault();
+                console.log("[事件] 外层滚轮事件触发，阻止默认并尝试控制 iframe 滚动");
                 const iframeWindow = iframe.contentWindow;
-                if (!iframeWindow) return;
+                if (!iframeWindow) {
+                    console.warn("[警告] iframe contentWindow 不存在，无法滚动");
+                    return;
+                }
                 const delta = e.deltaY || e.wheelDelta || -e.detail;
+                console.log(`[滚动] 外层滚轮 delta 值: ${delta}`);
                 iframeWindow.scrollBy(0, delta);
             };
 
             window.addEventListener('wheel', window._outerWheelHandler, { passive: false });
+            console.log("[绑定] 外层滚轮事件绑定成功");
         }
     }
 </script>
